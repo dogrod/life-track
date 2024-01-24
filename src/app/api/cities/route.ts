@@ -1,8 +1,11 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@/utils/supabase/client'
+import { createClient } from '@/utils/supabase/server'
+import { cookies } from 'next/headers'
 
 export async function GET(request: Request) {
-  const supabase = createClient()
+  const cookieStore = cookies()
+  const supabase = createClient(cookieStore)
+  // const supabase = createClient()
 
   const { data, error } = await supabase.from('cities').select(`
     id,
