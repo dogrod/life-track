@@ -9,6 +9,7 @@ import React, { useEffect, useState } from 'react'
 import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
 import { cookies } from 'next/headers'
 import { createClient } from '@/utils/supabase/server'
+import Image from 'next/image'
 
 interface City {
   id: number
@@ -98,7 +99,7 @@ export default async function Page() {
       {cards.map((card) => (
         <Card key={card.id}>
           {card.imageUrl && (
-            <img
+            <Image
               alt={card.title}
               className="w-full h-48 object-cover rounded-t-lg"
               height="200"
