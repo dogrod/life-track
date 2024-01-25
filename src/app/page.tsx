@@ -5,10 +5,19 @@ import {
   CardContent,
   Card,
 } from '@/components/ui/card'
-import React, { useState } from 'react'
+import { getCityImage } from '@/utils/unsplash'
+import React, { useEffect, useState } from 'react'
+
+interface City {
+  id: number
+  title: string
+  description: string
+  date: string
+  imageUrl?: string
+}
 
 export default function TravelCards() {
-  const [cards, setCards] = useState([
+  const [cards, setCards] = useState<City[]>([
     {
       id: 1,
       title: 'Paris',
@@ -47,21 +56,38 @@ export default function TravelCards() {
     },
   ])
 
+  useEffect(() => {
+    async function fetchImages() {
+      const updatedCards = await Promise.all(
+        cards.map(async (card) => {
+          const imageUrl = await getCityImage(card.title)
+          return { ...card, imageUrl }
+        }),
+      )
+
+      setCards(updatedCards)
+    }
+
+    fetchImages()
+  }, [])
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
       {cards.map((card) => (
         <Card key={card.id}>
-          <img
-            alt={card.title}
-            className="w-full h-48 object-cover rounded-t-lg"
-            height="200"
-            src="/placeholder.svg"
-            style={{
-              aspectRatio: '300/200',
-              objectFit: 'cover',
-            }}
-            width="300"
-          />
+          {card.imageUrl && (
+            <img
+              alt={card.title}
+              className="w-full h-48 object-cover rounded-t-lg"
+              height="200"
+              src={card.imageUrl}
+              style={{
+                aspectRatio: '300/200',
+                objectFit: 'cover',
+              }}
+              width="300"
+            />
+          )}
           <CardContent className="p-4">
             <CardTitle>{card.title}</CardTitle>
             <CardDescription>{card.description}</CardDescription>
